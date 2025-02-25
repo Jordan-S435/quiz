@@ -8,10 +8,27 @@
 <body>
     <h1>Web Quiz</h1>
 
-    <h2>How Should you Not refer to JavaScript</h2>
+    <h2>How Should you Not refer to JavaScript?</h2>
 
-    <button>JS</button>
-    <button>VanillaJS</button>
-    <button>Java</button>
+    <button onclick="check(this)">JS</button>
+    <button onclick="check(this)">VanillaJS</button>
+    <button onclick="check(this)">Java</button>
+
+    <h2>What does the C in CSS stand for?</h2>
+
+    <button onclick="check(this)" class="correct">Cascading</button>
+    <button onclick="check(this)">Cat</button>
+    <button onclick="check(this)">Java</button>
+
+    <script>
+        function check(button) {
+            if (button.textContent == "Java") {
+                button.style.background = "green";
+        } else {
+            button.style.background = "red";
+        }
+        }
+
+    </script>
 </body>
 </html>
