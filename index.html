@@ -3,32 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
+    <title>Miami Hurricanes Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f7f7f7;
+        }
+        
+        h1 {
+            color: #005030; /* Miami green */
+        }
+        
+        .question-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f47321; /* Miami orange */
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #e06010;
+        }
+        
+        button.correct {
+            background-color: #4caf50;
+        }
+        
+        button.incorrect {
+            background-color: #f44336;
+        }
+        
+        .progress {
+            margin-bottom: 10px;
+        }
+        
+        .result-screen {
+            display: none;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-screen.show {
+            display: block;
+        }
+        
+        .emoji {
+            font-size: 50px;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Web Quiz</h1>
-
-    <h2>How Should you Not refer to JavaScript?</h2>
-
-    <button onclick="check(this)">JS</button>
-    <button onclick="check(this)">VanillaJS</button>
-    <button onclick="check(this)">Java</button>
-
-    <h2>What does the C in CSS stand for?</h2>
-
-    <button onclick="check(this)" class="correct">Cascading</button>
-    <button onclick="check(this)">Cat</button>
-    <button onclick="check(this)">Java</button>
-
+    <h1>Miami Hurricanes Quiz</h1>
+    
+    <div class="progress">
+        Question <span id="currentQuestion">1</span> of <span id="totalQuestions">5</span>
+    </div>
+    
+    <div class="question-container">
+        <h2 id="question">Loading question...</h2>
+        <div class="options" id="options">
+            <!-- Options will be added here -->
+        </div>
+    </div>
+    
+    <div class="result-screen" id="resultScreen">
+        <div class="emoji" id="resultEmoji">🎉</div>
+        <h2 id="resultTitle">Quiz Complete!</h2>
+        <p id="resultMessage">You scored: <span id="score">0</span>/<span id="totalScore">5</span></p>
+        <button id="restartButton">Play Again</button>
+    </div>
+    
     <script>
-        function check(button) {
-            if (button.textContent == "Java") {
-                button.style.background = "green";
-        } else {
-            button.style.background = "red";
+        // Simple quiz questions about University of Miami
+        const questions = [
+            {
+                question: "What is the University of Miami's mascot?",
+                options: ["Gators", "Hurricanes", "Dolphins", "Panthers"],
+                answer: "Hurricanes"
+            },
+            {
+                question: "What are the University of Miami's colors?",
+                options: ["Blue and Gold", "Green and Orange", "Red and Black", "Purple and Yellow"],
+                answer: "Green and Orange"
+            },
+            {
+                question: "What is the name of the University of Miami's football stadium?",
+                options: ["Hard Rock Stadium", "Orange Bowl", "Miami Stadium", "Dolphin Stadium"],
+                answer: "Hard Rock Stadium"
+            },
+            {
+                question: "In what city is the University of Miami located?",
+                options: ["Miami", "Coral Gables", "Miami Beach", "Brickell"],
+                answer: "Coral Gables"
+            },
+            {
+                question: "What year was the University of Miami founded?",
+                options: ["1925", "1945", "1965", "1985"],
+                answer: "1925"
+            }
+        ];
+        
+        // Game variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        
+        // DOM elements
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const currentQuestionElement = document.getElementById("currentQuestion");
+        const totalQuestionsElement = document.getElementById("totalQuestions");
+        const resultScreen = document.getElementById("resultScreen");
+        const scoreElement = document.getElementById("score");
+        const totalScoreElement = document.getElementById("totalScore");
+        const resultEmoji = document.getElementById("resultEmoji");
+        const resultTitle = document.getElementById("resultTitle");
+        const resultMessage = document.getElementById("resultMessage");
+        const restartButton = document.getElementById("restartButton");
+        
+        // Initialize the quiz
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            resultScreen.classList.remove("show");
+            totalQuestionsElement.textContent = questions.length;
+            totalScoreElement.textContent = questions.length;
+            loadQuestion();
         }
+        
+        // Load a question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            questionElement.textContent = question.question;
+            
+            // Clear previous options
+            optionsElement.innerHTML = "";
+            
+            // Add option buttons
+            question.options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.addEventListener("click", () => checkAnswer(option));
+                optionsElement.appendChild(button);
+            });
         }
-
+        
+        // Check if the answer is correct
+        function checkAnswer(selectedOption) {
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            const buttons = optionsElement.querySelectorAll("button");
+            
+            // Disable all buttons
+            buttons.forEach(button => {
+                button.disabled = true;
+                
+                if (button.textContent === correctAnswer) {
+                    button.classList.add("correct");
+                } else if (button.textContent === selectedOption && selectedOption !== correctAnswer) {
+                    button.classList.add("incorrect");
+                }
+            });
+            
+            // Update score if correct
+            if (selectedOption === correctAnswer) {
+                score++;
+            }
+            
+            // Move to next question after a short delay
+            setTimeout(() => {
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        }
+        
+        // Show the results screen
+        function showResults() {
+            scoreElement.textContent = score;
+            
+            if (score === questions.length) {
+                resultEmoji.textContent = "🏆";
+                resultTitle.textContent = "Perfect Score!";
+                resultMessage.textContent = `Congratulations! You got all ${score} questions right!`;
+            } else if (score >= questions.length / 2) {
+                resultEmoji.textContent = "🎉";
+                resultTitle.textContent = "Good Job!";
+                resultMessage.textContent = `You scored: ${score}/${questions.length}`;
+            } else {
+                resultEmoji.textContent = "😕";
+                resultTitle.textContent = "Try Again!";
+                resultMessage.textContent = `You scored: ${score}/${questions.length}`;
+            }
+            
+            resultScreen.classList.add("show");
+        }
+        
+        // Event listeners
+        restartButton.addEventListener("click", initQuiz);
+        
+        // Start the quiz
+        initQuiz();
     </script>
 </body>
 </html>

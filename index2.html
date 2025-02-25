@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miami Hurricanes Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        
+        h1 {
+            color: #005030; /* Miami green */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .start-screen {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background-color: #f47321; /* Miami orange */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+        }
+        
+        .question-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .timer {
+            font-weight: bold;
+            color: #f47321;
+        }
+        
+        .progress-bar {
+            background-color: #eee;
+            height: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #f47321; /* Miami orange */
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .option-btn {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            color: #333;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            background-color: #f9f9f9;
+            border-color: #ccc;
+        }
+        
+        .option-btn.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .feedback {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background-color: #f47321; /* Miami orange */
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: #e06010;
+        }
+        
+        .btn-green {
+            background-color: #005030; /* Miami green */
+        }
+        
+        .btn-green:hover {
+            background-color: #003d23;
+        }
+        
+        .result-screen {
+            display: none;
+            margin: 20px 0;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-screen.show {
+            display: block;
+        }
+        
+        .emoji {
+            font-size: 60px;
+            margin: 15px 0;
+        }
+        
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #005030; /* Miami green */
+        }
+        
+        .score-breakdown {
+            margin: 20px 0;
+            text-align: left;
+            padding: 0 20px;
+        }
+        
+        .facts {
+            font-style: italic;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Miami Hurricanes Quiz</h1>
+    
+    <!-- Start Screen -->
+    <div class="start-screen" id="startScreen">
+        <div class="logo">🌀</div>
+        <h2>Test Your Knowledge</h2>
+        <p>How well do you know the University of Miami? Take this quiz to find out!</p>
+        <p class="facts">5 questions • Time limit: 15 seconds per question</p>
+        <button class="btn" id="startButton">Start Quiz</button>
+    </div>
+    
+    <!-- Question Screen -->
+    <div class="question-container" id="questionContainer">
+        <div class="question-header">
+            <div>Question <span id="currentQuestion">1</span> of <span id="totalQuestions">5</span></div>
+            <div class="timer">Time: <span id="timerDisplay">15</span>s</div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <h2 id="questionText">Loading question...</h2>
+        
+        <div class="options" id="options">
+            <!-- Options will be added here -->
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <button class="btn" id="nextButton" style="display: none;">Next Question</button>
+    </div>
+    
+    <!-- Result Screen -->
+    <div class="result-screen" id="resultScreen">
+        <div class="emoji" id="resultEmoji">🎉</div>
+        <h2 id="resultTitle">Quiz Complete!</h2>
+        
+        <div class="score-display">
+            You scored: <span id="score">0</span>/<span id="totalScore">5</span>
+        </div>
+        
+        <div class="score-breakdown" id="scoreBreakdown">
+            <!-- Score breakdown will be added here -->
+        </div>
+        
+        <p id="resultMessage">Thanks for taking the quiz!</p>
+        
+        <div class="facts" id="funFact">
+            Did you know? The University of Miami's mascot Sebastian the Ibis was chosen because the ibis is the last bird to seek shelter before a hurricane and the first to return after it passes.
+        </div>
+        
+        <button class="btn btn-green" id="restartButton">Play Again</button>
+    </div>
+    
+    <script>
+        // Quiz questions about University of Miami
+        const questions = [
+            {
+                question: "What is the University of Miami's mascot?",
+                options: ["Gators", "Hurricanes", "Dolphins", "Panthers"],
+                answer: "Hurricanes",
+                fact: "The Miami Hurricanes are named after the devastating 1926 hurricane that hit Miami just as the university was preparing to open."
+            },
+            {
+                question: "What are the University of Miami's colors?",
+                options: ["Blue and Gold", "Green and Orange", "Red and Black", "Purple and Yellow"],
+                answer: "Green and Orange",
+                fact: "The orange represents the Florida citrus industry, and the green represents the palm trees of South Florida."
+            },
+            {
+                question: "What is the name of the University of Miami's football stadium?",
+                options: ["Hard Rock Stadium", "Orange Bowl", "Miami Stadium", "Dolphin Stadium"],
+                answer: "Hard Rock Stadium",
+                fact: "Before moving to Hard Rock Stadium, the Hurricanes played in the historic Orange Bowl from 1937 to 2007."
+            },
+            {
+                question: "In what city is the University of Miami located?",
+                options: ["Miami", "Coral Gables", "Miami Beach", "Brickell"],
+                answer: "Coral Gables",
+                fact: "Coral Gables is known as 'The City Beautiful' and features Mediterranean Revival architecture."
+            },
+            {
+                question: "What year was the University of Miami founded?",
+                options: ["1925", "1945", "1965", "1985"],
+                answer: "1925",
+                fact: "The University of Miami began with just 372 students in its first year."
+            }
+        ];
+        
+        // Game variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timeLeft = 15;
+        let timer;
+        let userAnswers = [];
+        
+        // DOM elements
+        const startScreen = document.getElementById("startScreen");
+        const questionContainer = document.getElementById("questionContainer");
+        const questionText = document.getElementById("questionText");
+        const options = document.getElementById("options");
+        const currentQuestionElement = document.getElementById("currentQuestion");
+        const totalQuestionsElement = document.getElementById("totalQuestions");
+        const progressFill = document.getElementById("progressFill");
+        const feedback = document.getElementById("feedback");
+        const nextButton = document.getElementById("nextButton");
+        const timerDisplay = document.getElementById("timerDisplay");
+        const resultScreen = document.getElementById("resultScreen");
+        const scoreElement = document.getElementById("score");
+        const totalScoreElement = document.getElementById("totalScore");
+        const resultEmoji = document.getElementById("resultEmoji");
+        const resultTitle = document.getElementById("resultTitle");
+        const resultMessage = document.getElementById("resultMessage");
+        const funFactElement = document.getElementById("funFact");
+        const scoreBreakdown = document.getElementById("scoreBreakdown");
+        const startButton = document.getElementById("startButton");
+        const restartButton = document.getElementById("restartButton");
+        
+        // Start the quiz
+        function startQuiz() {
+            startScreen.style.display = "none";
+            questionContainer.style.display = "block";
+            
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            
+            totalQuestionsElement.textContent = questions.length;
+            totalScoreElement.textContent = questions.length;
+            
+            loadQuestion();
+        }
+        
+        // Load a question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            // Update UI
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            questionText.textContent = question.question;
+            progressFill.style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+            feedback.style.display = "none";
+            nextButton.style.display = "none";
+            
+            // Clear previous options
+            options.innerHTML = "";
+            
+            // Add option buttons
+            question.options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.className = "option-btn";
+                button.addEventListener("click", () => selectAnswer(option));
+                options.appendChild(button);
+            });
+            
+            // Start timer
+            resetTimer();
+        }
+        
+        // Handle answer selection
+        function selectAnswer(selectedOption) {
+            clearInterval(timer); // Stop the timer
+            
+            const correctAnswer = questions[currentQuestionIndex].answer;
+            const buttons = options.querySelectorAll(".option-btn");
+            
+            // Save user's answer
+            userAnswers.push({
+                question: questions[currentQuestionIndex].question,
+                userAnswer: selectedOption,
+                correctAnswer: correctAnswer
+            });
+            
+            // Disable all buttons
+            buttons.forEach(button => {
+                button.disabled = true;
+                
+                if (button.textContent === correctAnswer) {
+                    button.classList.add("correct");
+                } else if (button.textContent === selectedOption && selectedOption !== correctAnswer) {
+                    button.classList.add("incorrect");
+                }
+            });
+            
+            // Show feedback
+            feedback.style.display = "block";
+            
+            if (selectedOption === correctAnswer) {
+                score++;
+                feedback.textContent = "Correct! Well done!";
+                feedback.className = "feedback correct";
+            } else {
+                feedback.textContent = `Incorrect. The correct answer is ${correctAnswer}.`;
+                feedback.className = "feedback incorrect";
+            }
+            
+            // Show next button
+            nextButton.style.display = "block";
+        }
+        
+        // Handle timer
+        function startTimer() {
+            timeLeft = 15;
+            timerDisplay.textContent = timeLeft;
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timeUp();
+                }
+            }, 1000);
+        }
+        
+        function resetTimer() {
+            clearInterval(timer);
+            startTimer();
+        }
+        
+        function timeUp() {
+            // Auto-select wrong answer when time is up
+            userAnswers.push({
+                question: questions[currentQuestionIndex].question,
+                userAnswer: "No answer",
+                correctAnswer: questions[currentQuestionIndex].answer
+            });
+            
+            // Show correct answer
+            const buttons = options.querySelectorAll(".option-btn");
+            buttons.forEach(button => {
+                button.disabled = true;
+                if (button.textContent === questions[currentQuestionIndex].answer) {
+                    button.classList.add("correct");
+                }
+            });
+            
+            // Show feedback
+            feedback.style.display = "block";
+            feedback.textContent = "Time's up! You didn't select an answer.";
+            feedback.className = "feedback incorrect";
+            
+            // Show next button
+            nextButton.style.display = "block";
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Show the results screen
+        function showResults() {
+            questionContainer.style.display = "none";
+            resultScreen.classList.add("show");
+            
+            scoreElement.textContent = score;
+            
+            // Create score breakdown
+            scoreBreakdown.innerHTML = "";
+            userAnswers.forEach((answer, index) => {
+                const isCorrect = answer.userAnswer === answer.correctAnswer;
+                const icon = isCorrect ? "✅" : "❌";
+                
+                const item = document.createElement("p");
+                item.innerHTML = `${icon} Question ${index + 1}: ${isCorrect ? "Correct" : `Incorrect (You chose: ${answer.userAnswer})`}`;
+                scoreBreakdown.appendChild(item);
+            });
+            
+            // Set result message and emoji
+            if (score === questions.length) {
+                resultEmoji.textContent = "🏆";
+                resultTitle.textContent = "Perfect Score!";
+                resultMessage.textContent = "Congratulations! You're a true Miami Hurricane!";
+            } else if (score >= questions.length / 2) {
+                resultEmoji.textContent = "🎉";
+                resultTitle.textContent = "Good Job!";
+                resultMessage.textContent = "You know your Miami facts pretty well!";
+            } else {
+                resultEmoji.textContent = "😕";
+                resultTitle.textContent = "Keep Learning!";
+                resultMessage.textContent = "Looks like you need to brush up on your Miami knowledge.";
+            }
+            
+            // Show a random fun fact
+            const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            funFactElement.textContent = `Did you know? ${randomQuestion.fact}`;
+        }
+        
+        // Reset and restart the quiz
+        function restartQuiz() {
+            resultScreen.classList.remove("show");
+            startScreen.style.display = "block";
+        }
+        
+        // Event listeners
+        startButton.addEventListener("click", startQuiz);
+        nextButton.addEventListener("click", nextQuestion);
+        restartButton.addEventListener("click", restartQuiz);
+        
+        // Make sure all elements are populated
+        totalQuestionsElement.textContent = questions.length;
+        totalScoreElement.textContent = questions.length;
+    </script>
+</body>
+</html>
